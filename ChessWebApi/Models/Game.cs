@@ -6,7 +6,7 @@ namespace ChessWebApi.Models
 {
     public class Game
     {
-        public int Id { get; set; }// Primary key
+        public int IdPK { get; set; }// Primary key
         public string whiteName { get; set; }
         public string blackName { get; set; }
 

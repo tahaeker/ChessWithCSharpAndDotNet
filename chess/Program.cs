@@ -79,7 +79,7 @@ class Program
 
 
 
-        BoardPrinter.PrintBoard(ref ctx);
+        BoardPrinter.PrintBoard(ctx);
 		
 		
 		int i = 0;
@@ -93,7 +93,7 @@ class Program
 		{
             InputHandler.TakeFrom(ctx, inputProvider);
             Console.Clear();
-            BoardPrinter.PrintBoard(ref ctx);
+            BoardPrinter.PrintBoard(ctx);
 
 
             InputHandler.TakeTo(ctx, inputProvider);
@@ -105,7 +105,7 @@ class Program
             {
                 outputProvider.WriteLine(result.ErrorMessage);
             }
-			BoardPrinter.PrintBoard(ref ctx);
+			BoardPrinter.PrintBoard(ctx);
 
 
             //if just king is left  

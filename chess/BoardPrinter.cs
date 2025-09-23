@@ -1,14 +1,16 @@
 ﻿using System;
+using ChessEngine.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChessEngine.Core
+
+namespace chess
 {
     public class BoardPrinter
     {
-        public static void PrintBoard(ref ChessContext ctx)
+        public static void PrintBoard(ChessContext ctx)
         {
             Console.WriteLine("    a   b   c   d   e   f   g   h");
 

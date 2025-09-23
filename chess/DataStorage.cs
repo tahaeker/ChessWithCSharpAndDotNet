@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Collections.Generic;
 using System.Text.Json;
+using ChessEngine.Core;
 
-
-namespace ChessEngine.Core
+namespace chess
 {
     public class DataStorage
     {

@@ -3,7 +3,7 @@ namespace ChessEngine.Core
 {
     public class Move
     {
-        public int Id { get; set; } // veritabanı için primary key
+        public int IdPKDb { get; set; } // veritabanı için primary key
 
         public string From { get; set; }   // e2
         public string To { get; set; }     // e4

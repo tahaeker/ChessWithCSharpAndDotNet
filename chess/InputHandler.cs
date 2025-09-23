@@ -1,8 +1,8 @@
 ﻿using chess.Interfaces;
+using ChessEngine.Core;
 
 
-
-namespace ChessEngine.Core
+namespace chess
 {
     public class InputHandler
     {

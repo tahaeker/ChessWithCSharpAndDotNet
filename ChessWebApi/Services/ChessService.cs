@@ -17,6 +17,15 @@ namespace ChessWebApi.Services
             _context = new ChessContext();
             _db = db;
 
+            try
+            {
+                _currentGameId = _db.Games.Any() ? _db.Games.Max(g => g.IdPK) : 0;
+            }
+            catch
+            {
+                _currentGameId = 0; 
+            }
+
         }
 
         private int _currentGameId;
@@ -26,7 +35,6 @@ namespace ChessWebApi.Services
             takePlayerName(nameWhite, nameBlack);
             var game = new Game()
             {
-                Id = _currentGameId++,
                 whiteName = nameWhite,
                 blackName = nameBlack,
                 Status = "ongoing",
@@ -36,6 +44,7 @@ namespace ChessWebApi.Services
             };
             _db.Games.Add(game);
             _db.SaveChanges();
+            _currentGameId = game.IdPK;
         }
 
         
@@ -63,7 +72,7 @@ namespace ChessWebApi.Services
             else
             {
                 var move = BoardConverter.stringToMove(from, to, _context);
-                move.Id = _currentGameId ; 
+                move.IdPKDb = _currentGameId ; 
                
                 _db.Moves.Add(move);
                 _db.SaveChanges();
@@ -95,6 +104,11 @@ namespace ChessWebApi.Services
 
         public IEnumerable<Move> GetHistory()
         {
+            if (_currentGameId >0)
+                return _db.Moves.Where(m => m.gameId == _currentGameId).ToList();
+
+
+
             return _context.MoveHistory;
         }
 
