@@ -20,7 +20,7 @@ namespace ChessWebApi.Controllers
         [HttpPost("newgame")]
         public IActionResult NewGame([FromQuery] string WhiteName, [FromQuery] string BlackName)
         {
-            _svc.StartNewGame(WhiteName, BlackName);
+             _svc.StartNewGame(WhiteName, BlackName);
             return Ok(new { message = "New game Started!" });
         }
 
