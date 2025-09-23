@@ -17,7 +17,7 @@ namespace ChessEngine.Core
         }
     }
 
-    public class ErrorChecker
+    public class ErrorChecker 
     {
         public static string MoveError(string from, string to, ChessContext ctx)
         {
@@ -25,16 +25,16 @@ namespace ChessEngine.Core
             {
                 return "";
             }
-
+            
             //Inputfrom
-            if (!InputHandler.IsValidFromToCondition(from,to,ctx).Item1)
+            if (!MoveValidator.IsValidFromToCondition(from,to,ctx).Item1)
             {
                 string error = ctx.InputFromError;
                 return error;
 
             }
             //Inputto
-            if(!InputHandler.IsValidFromToCondition(from, to, ctx).Item2)
+            if(!MoveValidator.IsValidFromToCondition(from, to, ctx).Item2)
             {
                 string error= ctx.InputToError;
                 return error;

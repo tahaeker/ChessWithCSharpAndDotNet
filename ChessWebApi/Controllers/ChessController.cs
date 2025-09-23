@@ -1,5 +1,4 @@
 ﻿using ChessWebApi.Services;
-using ChessWebApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -12,7 +11,7 @@ namespace ChessWebApi.Controllers
 
     {
         private readonly IChessService _svc;
-        public ChessController(ChessService chessService)
+        public ChessController(IChessService chessService)
         {
             _svc = chessService;
         }

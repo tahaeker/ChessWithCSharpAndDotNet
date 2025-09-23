@@ -316,5 +316,91 @@ namespace ChessEngine.Core
             
             return false;
         }
+
+        public static (bool, bool) IsValidFromToCondition(string from, string to, ChessContext ctx)
+        {
+            // From validation
+            bool isFromValid = true;
+            ctx.InputFromError= "";
+
+            if (string.IsNullOrEmpty(from))
+            {
+                ctx.InputFromError = "From cannot be empty!!";
+                isFromValid = false;
+            }
+            else if (from.Length != 2)
+            {
+                ctx.InputFromError = "From must be 2 characters long!!";
+                isFromValid = false;
+            }
+            else
+            {
+                char letter = from[0];
+                int number = from[1] - '0';
+                if (!(letter >= 'a' && letter <= 'h'))
+                {
+                    ctx.InputFromError = "Row (X Axis) of From must be between a-h";
+                    isFromValid = false;
+                }
+                else if (!(number >= 1 && number <= 8))
+                {
+                    ctx.InputFromError = "Col (Y Axis) of From must be between 1-8";
+                    isFromValid = false;
+                }
+            }
+
+            ctx.IsInputFromValid = isFromValid;
+            ctx.InputToError= "";
+
+
+            // To validation
+            bool isToValid = true;
+
+            if (!string.IsNullOrEmpty(to))
+            {
+                if (to.Length != 2)
+                {
+                    ctx.InputToError = "To must be 2 characters long!!";
+                    isToValid = false;
+                }
+                else
+                {
+                    char letter = to[0];
+                    int number = to[1] - '0';
+                    if (!(letter >= 'a' && letter <= 'h'))
+                    {
+                        ctx.InputToError = "To must be between a-h!!";
+                        isToValid = false;
+                    }
+                    else if (!(number >= 1 && number <= 8))
+                    {
+                        ctx.InputToError = "To must be between 1-8!!";
+                        isToValid = false;
+                    }
+                    else if (from != null && from == to)
+                    {
+                        ctx.InputToError = "From and To cannot be the same!!";
+                        isToValid = false;
+                    }
+                }
+            }
+            else if (to != null)
+            {
+                ctx.InputToError = "To cannot be empty!!";
+                isToValid = false;
+            }
+
+            ctx.IsInputToValid = isToValid;
+
+            return (isFromValid, isToValid);
+        }
+
+
+
+
+
+
     }
+
+
 }

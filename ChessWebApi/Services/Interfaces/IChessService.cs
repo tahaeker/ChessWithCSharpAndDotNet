@@ -1,6 +1,6 @@
 ﻿using ChessEngine.Core;
 
-namespace ChessWebApi.Services.Interfaces
+namespace ChessWebApi.Services
 {
     public interface IChessService
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChessEngine.Core
+namespace chess.Interfaces
 {
     public interface IOutputProvider
     {

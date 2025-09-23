@@ -1,11 +1,5 @@
-﻿using System;
-using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using ChessEngine.Core;
-
+﻿using ChessEngine.Core;
+using chess.Interfaces;
 
 
 
@@ -36,15 +30,15 @@ public class ConsoleInputProvider : IInputProvider//this is taking data input fr
 
 public class ConsoleOutputProvider : IOutputProvider
 {
-	public void Write(string message)
-	{
-		Console.Write(message);
+    public void Write(string message)
+    {
+        Console.Write(message);
     }
 
-	public void WriteLine(string message)
-	{
-		Console.WriteLine(message);
-	}
+    public void WriteLine(string message)
+    {
+        Console.WriteLine(message);
+    }
 }
 class Program
 {
@@ -71,10 +65,11 @@ class Program
             ctx.Board = ctx.BoardHistory.Last();
         }
 
-        IInputProvider inputProvider = new ConsoleInputProvider();
-		IOutputProvider outputProvider = new ConsoleOutputProvider();
 
-		outputProvider.WriteLine("Welcome to Console Chess!");
+        IInputProvider inputProvider = new ConsoleInputProvider();
+        IOutputProvider outputProvider = new ConsoleOutputProvider();
+
+        outputProvider.WriteLine("Welcome to Console Chess!");
 
 
 

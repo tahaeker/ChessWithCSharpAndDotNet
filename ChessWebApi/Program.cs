@@ -1,6 +1,5 @@
 using ChessWebApi.Data;
 using ChessWebApi.Services;
-using ChessWebApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -8,7 +7,8 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // ChessService'i dependency injection’a ekle
-builder.Services.AddSingleton<IChessService, ChessService>();//sql baðlantýsý
+// DOÐRU: Scoped
+builder.Services.AddScoped<IChessService, ChessService>();
 builder.Services.AddDbContext<ChessDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
