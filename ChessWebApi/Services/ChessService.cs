@@ -11,6 +11,7 @@ namespace ChessWebApi.Services
     {
         private readonly ChessContext _context;
         private readonly ChessDbContext _db;
+        private int _currentGameId;
 
         public ChessService(ChessDbContext db)
         {
@@ -28,8 +29,7 @@ namespace ChessWebApi.Services
 
         }
 
-        private int _currentGameId;
-        public void StartNewGame(string nameWhite, string nameBlack)
+        public async Task StartNewGameAsync(string nameWhite, string nameBlack)
         {
             _context.ResetBoard();
             takePlayerName(nameWhite, nameBlack);
@@ -42,8 +42,8 @@ namespace ChessWebApi.Services
                 Moves = new List<Move>()
 
             };
-            _db.Games.Add(game);
-            _db.SaveChanges();
+            await _db.Games.AddAsync(game);
+            await _db.SaveChangesAsync();
             _currentGameId = game.IdPK;
         }
 
@@ -60,33 +60,34 @@ namespace ChessWebApi.Services
 
 
 
-        public bool TryMove(string from, string to, out string message)
+        public async Task<(bool,string)> TryMoveAsync(string from, string to)
         {
+            string message;
             var result = ChessEngine.Core.ChessEngine.TryMove(from, to, _context);
 
             if (!result.Success)
             {
                 message = result.ErrorMessage;
-                return false;
+                return (false,message);
             }
             else
             {
                 var move = BoardConverter.stringToMove(from, to, _context);
                 move.IdPKDb = _currentGameId ; 
                
-                _db.Moves.Add(move);
-                _db.SaveChanges();
+                await _db.Moves.AddAsync(move);
+               await _db.SaveChangesAsync();
                
                 
                 message = "Move successful!";
 
-                return true;
+                return  (true,message);
             }
                 
                 
         }
 
-        public IEnumerable<string> GetBoard()
+        public async Task<IEnumerable<string>> GetBoardAsync()
         {
             
             var rows = new List<string>();
@@ -99,17 +100,17 @@ namespace ChessWebApi.Services
                 }
                 rows.Add(row.Trim());
             }
-            return rows;
+            return await Task.FromResult(rows);
         }
 
-        public IEnumerable<Move> GetHistory()
+        public async Task<IEnumerable<Move>> GetHistoryAsync()
         {
             if (_currentGameId >0)
-                return _db.Moves.Where(m => m.gameId == _currentGameId).ToList();
+                return await Task.FromResult(_db.Moves.Where(m => m.gameId == _currentGameId).ToList());
 
 
 
-            return _context.MoveHistory;
+            return await Task.FromResult(_context.MoveHistory);
         }
 
         

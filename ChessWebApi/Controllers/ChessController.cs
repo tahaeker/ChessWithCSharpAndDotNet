@@ -17,9 +17,9 @@ namespace ChessWebApi.Controllers
         }
 
         [HttpPost("newgame")]
-        public IActionResult NewGame([FromQuery] string WhiteName, [FromQuery] string BlackName)
+        public async Task<IActionResult> NewGame([FromQuery] string WhiteName, [FromQuery] string BlackName)
         {
-             _svc.StartNewGame(WhiteName, BlackName);
+            await _svc.StartNewGameAsync(WhiteName, BlackName);
             return Ok(new { message = "New game Started!" });
         }
 
@@ -27,16 +27,17 @@ namespace ChessWebApi.Controllers
 
 
         [HttpGet("board")]
-        public IActionResult GetBoard()
+        public async Task<IActionResult> GetBoard()
         {
-            var board = _svc.GetBoard();
+            var board = await _svc.GetBoardAsync();
             return Ok(board);
         }
 
         [HttpPost("move")]
-        public IActionResult MakeMove([FromQuery] string from, [FromQuery] string to)
+        public async Task<IActionResult> MakeMove([FromQuery] string from, [FromQuery] string to)
         {
-            if (_svc.TryMove(from, to, out string message))
+            var (success, message) = await _svc.TryMoveAsync(from, to);
+            if (success)
                 return Ok(new { success = true, message });
 
             return BadRequest(new { success = false, message });
@@ -44,9 +45,10 @@ namespace ChessWebApi.Controllers
         }
 
         [HttpGet("History")]
-        public IActionResult GetHistory()
+        public async Task<IActionResult> GetHistory()
         {
-            var history = _svc.GetHistory();
+
+            var history = await _svc.GetHistoryAsync();
             return Ok(history);
         }
 

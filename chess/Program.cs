@@ -1,5 +1,6 @@
 ﻿using ChessEngine.Core;
 using chess.Interfaces;
+using chess;
 
 
 
