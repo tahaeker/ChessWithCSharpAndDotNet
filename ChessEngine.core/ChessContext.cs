@@ -85,7 +85,7 @@ namespace ChessEngine.Core
 
         public void ResetBoard()
         {
-            Board= new char[8, 8]
+            Board =  new char[8, 8]
                 {
                 { 'r','n','b','q','k','b','n','r' },
                 { 'p','p','p','p','p','p','p','p' },
@@ -97,10 +97,10 @@ namespace ChessEngine.Core
                 { 'R','N','B','Q','K','B','N','R' }
             };
 
-            string inputFrom = "";
-            string inputTo = "";
-            char empty = '.';
-            bool whiteTurn = true;
+            inputFrom = "";
+            inputTo = "";
+            empty = '.';
+            whiteTurn = true;
 
             touchedCell = new Cell(0, 0, null);
             lastFromCell = new Cell(0, 0, null);

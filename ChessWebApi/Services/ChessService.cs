@@ -96,7 +96,10 @@ namespace ChessWebApi.Services
 
         public async Task<IEnumerable<string>> GetBoardAsync()
         {
-            var _ctx = await PlayingMovesFromDbToTheBoard(); // Await the Task to get the ChessContext instance
+            if (_context.Board == null)
+            {
+                _context.ResetBoard();
+            }
 
             var rows = new List<string>();
             for (int i = 0; i < 8; i++)
@@ -104,7 +107,7 @@ namespace ChessWebApi.Services
                 string row = "";
                 for (int j = 0; j < 8; j++)
                 {
-                    row += _ctx.Board[i,j] + " ";
+                    row += _context.Board[i,j] + " ";
                 }
                 rows.Add(row.Trim());
             }
@@ -126,25 +129,6 @@ namespace ChessWebApi.Services
             return _context.MoveHistory;
         }
 
-
-        public async Task<ChessContext> PlayingMovesFromDbToTheBoard()
-        {
-            var emptyLoopCtx = new ChessContext();
-
-            var moves = await _db.Moves
-                .Where(p => p.GameId == _currentGameId)
-                .OrderBy(p => p.CreatedAt)//artan düzende sıralar 
-                .ToListAsync();
-
-
-
-            foreach(var move in moves)
-            {
-                ChessEngine.Core.ChessEngine.TryMove(move.From, move.To, emptyLoopCtx);
-            }
-
-            return await Task.FromResult(emptyLoopCtx);
-        }
 
         public async Task SaveMoveAsync(Move move)
         {

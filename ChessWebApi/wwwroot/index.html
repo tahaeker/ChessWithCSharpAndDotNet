@@ -144,15 +144,21 @@
                         body: ''
                     });
 
-                    if (!res.ok) throw new Error('Hamle yapılamadı.');
+                    const data = await res.json(); // Backend cevabını parse et
+
+                    if (!res.ok) {
+                        // Backend’den dönen message varsa onu göster
+                        throw new Error(data.message || 'Hamle yapılamadı.');
+                    }
 
                     await fetchBoard(); // Tahtayı güncelle
                 } catch (err) {
                     console.error('Hamle gönderilirken hata:', err);
-                    alert('Hamle başarısız.');
+                    alert(err.message); // Backend’in gönderdiği message’ı gösterir
                 }
             }
         }
+
 
 
 
