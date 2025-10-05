@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
+//
 // ChessService'i dependency injection’a ekle
 builder.Services.AddSingleton<ChessContext>();
 builder.Services.AddTransient<IChessService, ChessService>();
