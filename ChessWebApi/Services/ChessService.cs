@@ -1,8 +1,11 @@
 ﻿using ChessEngine.Core;
 using ChessWebApi.Data;
 using ChessWebApi.Models;
+using ChessWebApi.Mapping;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
 using System;
+using System.Linq;
 
 
 namespace ChessWebApi.Services
@@ -13,14 +16,14 @@ namespace ChessWebApi.Services
         private readonly ChessDbContext _db;
         private int _currentGameId;
 
-        public ChessService(ChessDbContext db)
+        public ChessService(ChessDbContext db, ChessContext context)
         {
-            _context = new ChessContext();
+            _context = context;
             _db = db;
 
             try
             {
-                _currentGameId = _db.Games.Any() ? _db.Games.Max(g => g.IdPK) : 0;
+                _currentGameId = _db.Games.Any() ? _db.Games.Max(g => g.Id) : 0;
             }
             catch
             {
@@ -35,16 +38,19 @@ namespace ChessWebApi.Services
             takePlayerName(nameWhite, nameBlack);
             var game = new Game()
             {
+                
                 whiteName = nameWhite,
                 blackName = nameBlack,
                 Status = "ongoing",
                 CreatedAt = DateTime.Now,
-                Moves = new List<Move>()
+                Moves = new List<MoveEntity>()
 
             };
             await _db.Games.AddAsync(game);
             await _db.SaveChangesAsync();
-            _currentGameId = game.IdPK;
+            _currentGameId = game.Id;
+            
+                
         }
 
         
@@ -73,10 +79,11 @@ namespace ChessWebApi.Services
             else
             {
                 var move = BoardConverter.stringToMove(from, to, _context);
-                move.IdPKDb = _currentGameId ; 
-               
-                await _db.Moves.AddAsync(move);
-               await _db.SaveChangesAsync();
+                var moveEntity = move.ToEntity(_currentGameId);
+                
+
+                await _db.Moves.AddAsync(moveEntity);
+                await _db.SaveChangesAsync();
                
                 
                 message = "Move successful!";
@@ -89,14 +96,15 @@ namespace ChessWebApi.Services
 
         public async Task<IEnumerable<string>> GetBoardAsync()
         {
-            
+            var _ctx = await PlayingMovesFromDbToTheBoard(); // Await the Task to get the ChessContext instance
+
             var rows = new List<string>();
             for (int i = 0; i < 8; i++)
             {
                 string row = "";
                 for (int j = 0; j < 8; j++)
                 {
-                    row += _context.Board[i, j] + " ";
+                    row += _ctx.Board[i,j] + " ";
                 }
                 rows.Add(row.Trim());
             }
@@ -106,13 +114,45 @@ namespace ChessWebApi.Services
         public async Task<IEnumerable<Move>> GetHistoryAsync()
         {
             if (_currentGameId >0)
-                return await Task.FromResult(_db.Moves.Where(m => m.gameId == _currentGameId).ToList());
+            {
+                var entity = await _db.Moves
+                    .Where(m => m.GameId == _currentGameId)
+                    .OrderBy(m => m.CreatedAt)
+                    .ToListAsync();
+                return entity.Select(e => e.ToDomain()).ToList();
 
+            }
 
-
-            return await Task.FromResult(_context.MoveHistory);
+            return _context.MoveHistory;
         }
 
-        
+
+        public async Task<ChessContext> PlayingMovesFromDbToTheBoard()
+        {
+            var emptyLoopCtx = new ChessContext();
+
+            var moves = await _db.Moves
+                .Where(p => p.GameId == _currentGameId)
+                .OrderBy(p => p.CreatedAt)//artan düzende sıralar 
+                .ToListAsync();
+
+
+
+            foreach(var move in moves)
+            {
+                ChessEngine.Core.ChessEngine.TryMove(move.From, move.To, emptyLoopCtx);
+            }
+
+            return await Task.FromResult(emptyLoopCtx);
+        }
+
+        public async Task SaveMoveAsync(Move move)
+        {
+            var entity = move.ToEntity(_currentGameId);
+            _db.Moves.Add(entity);
+            await _db.SaveChangesAsync();
+        }
+
+
     }
 }

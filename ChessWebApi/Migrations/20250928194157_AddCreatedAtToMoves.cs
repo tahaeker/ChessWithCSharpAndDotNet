@@ -3,10 +3,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ChessWebApi.Migrations
+namespace ChessWeb
+    .Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class AddCreatedAtToMoves : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,6 +18,8 @@ namespace ChessWebApi.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    whiteName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    blackName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -37,23 +40,24 @@ namespace ChessWebApi.Migrations
                     Captured = table.Column<string>(type: "nvarchar(1)", nullable: false),
                     TurnNumber = table.Column<int>(type: "int", nullable: false),
                     IsWhiteTurn = table.Column<bool>(type: "bit", nullable: false),
-                    gameId = table.Column<int>(type: "int", nullable: false)
+                    GameId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Moves", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Moves_Games_gameId",
-                        column: x => x.gameId,
+                        name: "FK_Moves_Games_GameId",
+                        column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Moves_gameId",
+                name: "IX_Moves_GameId",
                 table: "Moves",
-                column: "gameId");
+                column: "GameId");
         }
 
         /// <inheritdoc />

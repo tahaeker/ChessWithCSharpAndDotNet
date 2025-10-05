@@ -12,11 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChessWebApi.Migrations
 {
     [DbContext(typeof(ChessDbContext))]
-    [Migration("20250923203030_opened_new_file")]
-    partial class opened_new_file
+    [Migration("20250928194157_AddCreatedAtToMoves")]
+    partial class AddCreatedAtToMoves
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        // Removed 'override' keyword as BuildTargetModel is not overriding any base method.
+        protected void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,46 +24,6 @@ namespace ChessWebApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ChessEngine.Core.Move", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Captured")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(1)");
-
-                    b.Property<string>("From")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsWhiteTurn")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Piece")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(1)");
-
-                    b.Property<string>("To")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TurnNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("gameId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("gameId");
-
-                    b.ToTable("Moves");
-                });
 
             modelBuilder.Entity("ChessWebApi.Models.Game", b =>
                 {
@@ -93,13 +53,58 @@ namespace ChessWebApi.Migrations
                     b.ToTable("Games");
                 });
 
-            modelBuilder.Entity("ChessEngine.Core.Move", b =>
+            modelBuilder.Entity("ChessWebApi.Models.MoveEntity", b =>
                 {
-                    b.HasOne("ChessWebApi.Models.Game", null)
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Captured")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("From")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsWhiteTurn")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Piece")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1)");
+
+                    b.Property<string>("To")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TurnNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("Moves");
+                });
+
+            modelBuilder.Entity("ChessWebApi.Models.MoveEntity", b =>
+                {
+                    b.HasOne("ChessWebApi.Models.Game", "Game")
                         .WithMany("Moves")
-                        .HasForeignKey("gameId")
+                        .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Game");
                 });
 
             modelBuilder.Entity("ChessWebApi.Models.Game", b =>

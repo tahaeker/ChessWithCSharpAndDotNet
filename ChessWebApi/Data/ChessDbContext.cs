@@ -15,7 +15,7 @@ namespace ChessWebApi.Data
 
 
         public DbSet<Game> Games { get; set; }
-        public DbSet<Move> Moves { get; set; }
+        public DbSet<MoveEntity> Moves { get; set; }
 
 
 

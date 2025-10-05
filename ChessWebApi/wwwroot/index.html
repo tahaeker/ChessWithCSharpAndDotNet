@@ -1,0 +1,185 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Satranç Tahtası</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 30px;
+            font-family: sans-serif;
+        }
+
+        .chessboard {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            border: 2px solid #333;
+            margin-top: 20px;
+        }
+
+        .cell {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+            cursor: pointer;
+        }
+
+        .white {
+            background-color: #f0d9b5;
+        }
+
+        .black {
+            background-color: #b58863;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        input {
+            margin: 0 5px;
+        }
+
+        @keyframes flash {
+            0%, 100% {
+                background-color: #ff4d4d;
+            }
+            /* kırmızı */
+            50% {
+                background-color: inherit;
+            }
+            /* orijinal renk */
+        }
+
+        .flash {
+            animation: flash 1s ease-in-out;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <input type="text" id="whiteName" placeholder="Beyaz oyuncu">
+        <input type="text" id="blackName" placeholder="Siyah oyuncu">
+        <button onclick="startNewGame()">Yeni Oyun Başlat</button>
+    </div>
+
+    <div class="chessboard" id="chessboard"></div>
+
+    <script>
+        const API_URL = '/api/chess'; // Backend URL
+
+        const pieceSymbols = {
+            'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
+            'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙',
+            '.': ''
+        };
+
+        let selectedCell = null; // İlk tıklanan hücreyi tutacak
+
+        
+
+        // Hücre indexini satranç koordinatına çevir
+        function indexToCoord(index) {
+            const row = Math.floor(index / 8);
+            const col = index % 8;
+            const file = String.fromCharCode(97 + col); // a-h
+            const rank = 8 - row; // 8-1
+            return `${file}${rank}`;
+        }
+
+        async function fetchBoard() {
+            try {
+                const res = await fetch(`${API_URL}/board`);
+                const boardData = await res.json();
+
+                const chessboard = document.getElementById('chessboard');
+                chessboard.innerHTML = '';
+
+                boardData.forEach((row, rowIndex) => {
+                    const cells = row.split(' ');
+                    cells.forEach((cell, colIndex) => {
+                        const cellDiv = document.createElement('div');
+                        cellDiv.classList.add('cell', (rowIndex + colIndex) % 2 === 0 ? 'white' : 'black');
+                        cellDiv.textContent = pieceSymbols[cell];
+                        chessboard.appendChild(cellDiv);
+
+                        const index = rowIndex * 8 + colIndex;
+                        // Tıklama olayı tüm hücrelere atanıyor
+                        cellDiv.onclick = () => handleCellClick(cellDiv, index, cell);
+                    });
+                });
+            } catch (err) {
+                console.error('Board yüklenirken hata oluştu:', err);
+            }
+        }
+
+        async function handleCellClick(cellDiv, index, cellValue) {
+            const coord = indexToCoord(index);
+
+            if (!selectedCell) {
+                // İlk tıklamada sadece dolu hücre seçilebilir
+                if (cellValue === '.') return;
+                selectedCell = coord;
+                cellDiv.style.outline = '3px solid yellow';
+            } else {
+                // İkinci tıklamada hem boş hem dolu hücre hedef olabilir
+                const from = selectedCell;
+                const to = coord;
+                selectedCell = null;
+
+                document.querySelectorAll('.chessboard .cell').forEach(c => c.style.outline = '');
+
+                try {
+                    const res = await fetch(`${API_URL}/move?from=${from}&to=${to}`, {
+                        method: 'POST',
+                        headers: { 'accept': '*/*' },
+                        body: ''
+                    });
+
+                    if (!res.ok) throw new Error('Hamle yapılamadı.');
+
+                    await fetchBoard(); // Tahtayı güncelle
+                } catch (err) {
+                    console.error('Hamle gönderilirken hata:', err);
+                    alert('Hamle başarısız.');
+                }
+            }
+        }
+
+
+
+        async function startNewGame() {
+            const whiteName = document.getElementById('whiteName').value || 'White';
+            const blackName = document.getElementById('blackName').value || 'Black';
+
+            try {
+                const res = await fetch(`${API_URL}/newgame?WhiteName=${encodeURIComponent(whiteName)}&BlackName=${encodeURIComponent(blackName)}`, {
+                    method: 'POST',
+                    headers: { 'accept': '*/*' },
+                    body: ''
+                });
+
+                if (!res.ok) throw new Error('Yeni oyun başlatılamadı.');
+
+                await fetchBoard();
+                alert(`Yeni oyun başlatıldı: ${whiteName} vs ${blackName}`);
+            } catch (err) {
+                console.error('Yeni oyun başlatılırken hata:', err);
+                alert('Yeni oyun başlatılamadı. Konsolu kontrol et.');
+            }
+        }
+
+        // Sayfa yüklendiğinde mevcut tahtayı getir
+        fetchBoard();
+    </script>
+
+</body>
+</html>

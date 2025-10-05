@@ -16,6 +16,8 @@ namespace ChessWebApi.Controllers
             _svc = chessService;
         }
 
+
+
         [HttpPost("newgame")]
         public async Task<IActionResult> NewGame([FromQuery] string WhiteName, [FromQuery] string BlackName)
         {
@@ -33,6 +35,9 @@ namespace ChessWebApi.Controllers
             return Ok(board);
         }
 
+
+
+
         [HttpPost("move")]
         public async Task<IActionResult> MakeMove([FromQuery] string from, [FromQuery] string to)
         {
@@ -43,6 +48,9 @@ namespace ChessWebApi.Controllers
             return BadRequest(new { success = false, message });
 
         }
+        
+
+
 
         [HttpGet("History")]
         public async Task<IActionResult> GetHistory()

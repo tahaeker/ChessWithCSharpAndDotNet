@@ -16,7 +16,7 @@ namespace ChessEngine.Core
         }
 
         public static MoveResult TryMove(string from,string to, ChessContext ctx)
-        {
+            {
             string error = ErrorChecker.MoveError(from, to, ctx);
 
             if(!string.IsNullOrEmpty(error))
