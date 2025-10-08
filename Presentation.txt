@@ -1,0 +1,84 @@
+﻿Sunum süresi hedef: 5 dakika (kısa ve vurucu)
+Slides + konuşma + komutlar / zamanlama
+
+Slide 1 — Başlık (10s)
+
+* Başlık: "Chess Engine .NET — Engine + API + Console"
+* Alt: İsim, pozisyon (stajyer adayı), repo linki (GitHub)
+
+Slide 2 — Hedef & Kısa Özet (20s)
+
+* Hedef: "Doğru kurallara sahip bir chess engine yazmak, bunu bir WebAPI ile entegre etmek ve demo edilebilir hale getirmek."
+* Kısa: 3 proje — engine, console, webapi; EF Core + Swagger.
+
+Slide 3 — Mimarinin Özeti (40s)
+
+* Şema: `[ChessEngine.core] <- reference -> [ChessWebApi]`
+  `[chess (Console)] -> uses ChessEngine.core`
+* Vurgu: Domain/Iş Kuralları engine’de; persistence WebApi’de.
+* Sayısal kanıt: ~29 C# dosyası, ~2700 satır (quick metric).
+
+Slide 4 — Canlı Demo (120s) **(Bu slayt en önemli)**
+
+* Hazırlık (sunucuyu başlat):
+
+  ```bash
+  # (opsiyonel: in-memory DB varsa doğrudan run)
+  dotnet run --project ChessWebApi
+  ```
+* Swagger’ı aç: `https://localhost:{PORT}/swagger`
+* Adımlar:
+
+  1. `POST /api/chess/newgame?WhiteName=Alice&BlackName=Bob` — yeni oyun başlat.
+  2. `GET /api/chess/board` — başlangıç tahtasını göster (8 satır string array).
+  3. `POST /api/chess/move?from=e2&to=e4` — hamleyi gerçekleştir.
+  4. `GET /api/chess/History` — yapılan hamlelerin veritabanına kaydedildiğini göster.
+* Konuşma notu: “Borad reconstruction: API, DB’deki moves’ı oynayarak tahtayı yeniden kurabiliyor — bu sayede server state persist edilebiliyor.”
+
+Slide 5 — Teknik Derinlik (40s)
+
+* Kod parçacığı göster: `ChessEngine.TryMove(from,to, ctx)` — kısa pseudocode:
+
+  * `ErrorChecker.MoveError` → kurallar uygulanır (turn, piece, legal move).
+  * `MoveStone` → taş taşınır; en-passant/castling flag’leri güncellenir.
+* Vurgu: Özel kurallar (castling ve en-passant) implementasyonunun zorluğu; sen çözmüşsün.
+
+Slide 6 — Karşılaşılan Zorluklar & Öğrenimler (20s)
+
+* Zorluk: hamle validasyonu + DB ile eş zamanlama; edge-case’ler (promote, en-passant).
+* Öğrenim: domain-first design, async DB işlemleri, mapping layer.
+
+Slide 7 — Sonraki Adımlar / Roadmap (20s)
+
+* Öncelik: unit testler (engine), logging, DTO’lar, CI (GitHub Actions), Docker.
+* Kapanış: “Projeyi geliştirmeye açığım; istenirse belirli PR’lar hazırladım.”
+
+Sunum sırasında söyleyebileceğin hazır cümleler (snippet)
+
+* “Engine, tüm oyun kurallarını kapsayacak şekilde tasarlandı — örnek: en-passant.”
+* “API, oyun geçmişini DB’ye kaydediyor; böylece istenirse birden fazla istemci aynı oyunu tekrar oluşturabilir.”
+* “Test yazmayı bir sonraki hedefim olarak belirledim; engine için unit tests ekleyeceğim.”
+
+Q&A için beklenen teknik sorular & kısa cevap önerileri
+
+* S: “Neden domain’i ayrı tuttun?” — C: Ayrık domain, yeniden kullanım ve test kolaylığı sağlar (console & API aynı logic’i kullanıyor).
+* S: “Concurrency/aynı anda iki kullanıcı nasıl etkiler?” — C: Şu an temel single-game modeli; birden fazla oyun/oturum için per-game context ve optimistic concurrency/transaction eklenebilir.
+* S: “Performans/scale?” — C: Okuma için NoTracking, cache (Redis) ve background worker’lar ile ölçeklenir; kritik yerler test edilecek.
+
+Tetikleyici komutlar (sunum öncesi)
+
+* DB migration varsa:
+
+  ```bash
+  dotnet ef database update --project ChessWebApi --startup-project ChessWebApi
+  ```
+* WebApi çalıştır:
+
+  ```bash
+  dotnet run --project ChessWebApi
+  ```
+* Console çalıştır (isteğe bağlı):
+
+  ```bash
+  dotnet run --project chess
+  ```

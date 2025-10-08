@@ -39,8 +39,8 @@ namespace ChessWebApi.Services
             var game = new Game()
             {
                 
-                whiteName = nameWhite,
-                blackName = nameBlack,
+                WhiteName = nameWhite,
+                BlackName = nameBlack,
                 Status = "ongoing",
                 CreatedAt = DateTime.Now,
                 Moves = new List<MoveEntity>()
@@ -136,6 +136,9 @@ namespace ChessWebApi.Services
             _db.Moves.Add(entity);
             await _db.SaveChangesAsync();
         }
+
+
+        
 
 
     }
