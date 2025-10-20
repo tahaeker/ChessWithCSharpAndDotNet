@@ -54,6 +54,8 @@ namespace ChessEngine.Core
         public Player WhitePlayer { get; set; }
         public Player BlackPlayer { get; set; }
 
+        public string GameEndMessage { get; set; } = "";
+
 
 
         public ChessContext()

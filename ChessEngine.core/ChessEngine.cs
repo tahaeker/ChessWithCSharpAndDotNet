@@ -26,6 +26,41 @@ namespace ChessEngine.Core
 
             MoveStone(from, to, ctx);
 
+            BoardState.CheckGameEnd(ctx);
+
+            #region
+            //if(ctx.isCheckmate)
+            //  {
+            //      return new MoveResult { Success = true, ErrorMessage = "Checkmate!" };
+            //  }
+            //  else if(ctx.isStalemate)
+            //  {
+            //      return new MoveResult { Success = true, ErrorMessage = "Stalemate!" };
+            //  }
+            //  else if(ctx.isDrawByInsufficientMaterial)
+            //  {
+            //      return new MoveResult { Success = true, ErrorMessage = "Draw by insufficient material!" };
+            //  }
+            //  else if(ctx.isDrawByFiftyMoveRule)
+            //  {
+            //      return new MoveResult { Success = true, ErrorMessage = "Draw by fifty-move rule!" };
+            //  }
+            //  else if(ctx.isDrawByThreefoldRepetition)
+            //  {
+            //      return new MoveResult { Success = true, ErrorMessage = "Draw by threefold repetition!" };
+            //  }
+            //  else if (ctx.isCheck)
+            //  {
+            //      return new MoveResult { Success = true, ErrorMessage = "Check!" };
+            //  }
+            #endregion
+
+            if (ctx.GameEndMessage != string.Empty)
+            {
+                return new MoveResult { Success = true, ErrorMessage = ctx.GameEndMessage };
+            }
+
+
             return new MoveResult { Success = true, ErrorMessage = string.Empty };
 
 

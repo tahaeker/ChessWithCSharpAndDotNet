@@ -121,27 +121,7 @@ class Program
 			}
 
 			
-            BoardState.CheckGameEnd(ctx);
-            // Check if the game has ended
-            if (ctx.whiteWins)
-			{
-				Console.WriteLine(" Whites Won.:)");
-                ctx.WhitePlayer.Wins++;
-                ctx.BlackPlayer.Losses--;
-                break;
-			}
-			else if (ctx.blackWins)
-			{
-				Console.WriteLine(" Blacks Won.:)");
-                ctx.BlackPlayer.Wins++;
-                ctx.WhitePlayer.Losses--;
-                break;
-			}
-			else if (ctx.drawStuation)
-			{
-				Console.WriteLine(" There is not Winner. Draw :)");
-				break;
-			}
+            
 
 
 

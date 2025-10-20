@@ -217,6 +217,22 @@ namespace ChessEngine.Core
                 ctx.drawStuation = true;
             }
 
+            if (ctx.whiteWins)
+            {
+                ctx.GameEndMessage = " Whites Won.:)";
+                ctx.WhitePlayer.Wins++;
+                ctx.BlackPlayer.Losses--;
+            }
+            else if (ctx.blackWins)
+            {
+                ctx.GameEndMessage = " Blacks Won.:)";
+                ctx.BlackPlayer.Wins++;
+                ctx.WhitePlayer.Losses--;
+            }
+            else if (ctx.drawStuation)
+            {
+                ctx.GameEndMessage = " There is not Winner. Draw :)";
+            }
 
         }
 
