@@ -60,7 +60,7 @@ Bu repository: C# ile yazılmış bir chess engine (ChessEngine.core), bir conso
    dotnet run --project chess
    ```
 
-## Örnek API çağrıları (swagger veya curl)
+## Örnek API çağrıları 
 
 * Yeni oyun başlat:
 
@@ -91,15 +91,20 @@ Bu repository: C# ile yazılmış bir chess engine (ChessEngine.core), bir conso
   ```
   GET /api/chess/History
   ```
+* Arayüz Entegreli:
 
-## Kod ve mimari notları (sunumda vurgulanacak)
+  ```
+  
+  ```
+
+## Kod ve mimari notları 
 
 * `ChessEngine.core`: oyun mantığı tek yerde. Test yazılacak en önemli yer burası.
 * `ChessWebApi/Services/ChessService.cs`: API ile domain arasındaki koordinasyonu sağlıyor; DB persistence burada.
 * `ChessWebApi/Mapping/MoveMapper.cs`: Domain ↔ Entity dönüşümleri.
 * `chess` console app: hızlı manual demo ve JSON export/import.
 
-## Kısa geliştirme önerileri (öncelikli)
+## Kısa vade güncelleştirmeler
 
 1. Unit tests (xUnit) — özellikle `ErrorChecker` ve `MoveValidator`.
 2. Service lifetime düzeltmesi: `AddScoped<IChessService, ChessService>()`.
